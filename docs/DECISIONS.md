@@ -140,7 +140,7 @@ Casos de uso actuales:
 ## ADR-008: Página única con secciones y navegación por anclas
 
 - **Fecha:** 2026-10-30
-- **Estado:** Aceptada
+- **Estado:** Aceptada (secciones actualizadas por ADR-011)
 
 **Contexto.** El portfolio tiene pocas secciones y se recorre de arriba hacia abajo.
 
@@ -155,7 +155,7 @@ Casos de uso actuales:
 ## ADR-009: Estilos con CSS plano y variables
 
 - **Fecha:** 2026-10-30
-- **Estado:** Aceptada
+- **Estado:** Aceptada (el modo claro/oscuro fue reemplazado por ADR-013)
 
 **Contexto.** El diseño es simple y no justifica un framework de CSS.
 
@@ -178,6 +178,90 @@ Casos de uso actuales:
 
 **Consecuencias.**
 - Cambiar el nombre visible requiere editar `siteConfig.ts` e `index.html`.
+
+---
+
+## ADR-011: Estructura de la página con carruseles
+
+- **Fecha:** 2026-10-30
+- **Estado:** Aceptada. Reemplaza las secciones de ADR-008 y la lista de casos de uso de ADR-005.
+
+**Contexto.** Se definió el diseño de la página: nombre en grande, subtítulo "Ingeniero en Computación" y un texto "sobre mí" arriba; debajo, carruseles de Proyectos, Estudios y Experiencia; al final, Contacto. Todo texto de relleno debe ser lorem ipsum, sin contenido inventado.
+
+**Decisión.**
+- Secciones: Inicio (hero de pantalla completa con el "sobre mí"), Proyectos, Estudios, Experiencia y Contacto. Se eliminan Sobre mí (pasa al hero) y Habilidades.
+- `Project`, `Education` y `Experience` son hoy alias de `PortfolioEntry` (`id`, `title`, `summary`, `description`, `image`). Se mantienen como tipos separados para que puedan crecer por separado.
+- "Ver más" no abre un modal: el carrusel se corre a la izquierda y aparece un panel de detalle a la derecha. En pantallas de 900 px o menos no hay lugar al costado, así que el panel se despliega debajo. Es una grilla de dos pistas cuyo tamaño (`grid-template-columns` o `grid-template-rows`) se anima con CSS. La altura de las tarjetas no cambia al expandir, para que la página no salte.
+- El panel muestra siempre la tarjeta activa: si se mueve el carrusel con el panel abierto, el detalle la sigue.
+- Al expandir, un ancho de `min(100vw - 4rem, 1600px)` (más ancho que el contenido del resto de la página, para no dejar un gran margen vacío a la derecha) se reparte 4/6 para la foto y 2/6 para el panel de texto. La foto tiene un máximo de 760 px de ancho. La foto activa se agranda, se centra en su parte y pierde el texto superpuesto; los controles se centran debajo de ella. Las tarjetas laterales siguen visibles detrás, más chicas y sin texto: asoman hacia la izquierda y se desvanecen antes de llegar al panel. El título y la descripción breve se muestran solo en el panel, arriba de la información adicional. Tocar la foto agrandada, la ✕ o Escape la achica.
+
+---
+
+## ADR-012: Items de los carruseles en un archivo editable a mano
+
+- **Fecha:** 2026-10-30
+- **Estado:** Aceptada
+
+**Contexto.** Agregar un item tiene que ser simple: ir a un archivo, copiar un bloque y cambiar textos, sin `id`, sin imports de imágenes y sin conocer las entidades del dominio.
+
+**Decisión.**
+- `src/content/carruseles.ts` contiene tres listas (`proyectos`, `estudios`, `experiencia`) de objetos con campos en español: `titulo`, `resumen`, `detalle` (opcional, texto multilínea donde una línea en blanco separa párrafos) e `imagen` (opcional: nombre de un archivo en `public/imagenes/` o una URL).
+- `src/infrastructure/data/carouselItems.ts` (`toPortfolioEntries`) los convierte en `PortfolioEntry`. Genera el `id` a partir de la posición, divide el detalle en párrafos y resuelve la ruta de la imagen con `import.meta.env.BASE_URL`, así funciona aunque el sitio se publique en una subcarpeta.
+- `src/content` es una capa más en ESLint: no puede importar ninguna otra capa ni React. Solo la lee infraestructura.
+
+**Consecuencias.**
+- El `id` depende del orden: si se reordenan los items, cambia. Hoy no se usa para nada persistente.
+- Las imágenes en `public/` no pasan por el bundler (no se optimizan ni llevan hash), a cambio de no necesitar imports.
+
+---
+
+## ADR-013: Tema visual futurista, oscuro, en celeste y rosa
+
+- **Fecha:** 2026-10-30
+- **Estado:** Aceptada. Reemplaza el modo claro/oscuro automático de ADR-009.
+
+**Contexto.** Se pidió un aspecto más futurista, con colores vibrantes, preferentemente celeste y rosa.
+
+**Decisión.**
+- Un solo tema, oscuro (`color-scheme: dark`); ya no se sigue `prefers-color-scheme`. Los colores de neón necesitan fondo oscuro para destacar.
+- Paleta en `:root`: `--cyan` (#00e5ff), `--pink` (#ff3ec9), `--gradient` (celeste → rosa) y sombras de brillo `--glow-cyan` y `--glow-pink`.
+- Fondo con luces difusas (gradientes radiales) y una grilla fina que se desvanece hacia abajo (`body::before`).
+- Texto con degradado en el nombre, la marca del header y el título del panel de detalle. Fuente monoespaciada (del sistema, `--font-mono`) para el menú, el subtítulo, los botones y el footer.
+- Bordes y halos de neón en la tarjeta principal del carrusel, en los botones y en los indicadores. La imagen de ejemplo usa la misma paleta.
+- No se agregan fuentes externas: se usan fuentes del sistema, para no depender de otro servicio ni sumar peso.
+
+**Consecuencias.**
+- Cambiar la paleta es editar unas pocas variables de `:root`.
+- Para usar una tipografía más "tecnológica" (por ejemplo Orbitron o Space Grotesk) habría que incluirla en el proyecto o cargarla de un servicio externo; sería una decisión nueva.
+
+---
+
+## ADR-014: Sitio bilingüe (español / inglés) sin librerías
+
+- **Fecha:** 2026-10-30
+- **Estado:** Aceptada. Amplía ADR-012 (el perfil también pasa a `src/content/`).
+
+**Contexto.** Se pidió un selector para cambiar entre inglés y español, con el idioma de la computadora como valor por defecto, y que cargar contenido siga siendo simple.
+
+**Decisión.**
+- **Dominio:** `Language` (`'es' | 'en'`). Los repositorios y casos de uso reciben el idioma: `getProfile(language)`, `getAll(language)`, `execute(language)`. El dominio no sabe de traducciones; solo pide el contenido en un idioma.
+- **Contenido:** cada texto de `src/content/` es un `Texto`: un string (igual en ambos idiomas) o `{ es, en? }`. Si falta `en`, se usa `es`. Así no hace falta duplicar lo que no cambia (nombre, email, URLs) y se puede traducir de a poco. Los datos personales se movieron a `src/content/perfil.ts`.
+- **Infraestructura:** `localize()` elige la versión del texto. `StaticListRepository` y `StaticProfileRepository` reciben una función `(language) => datos` en lugar de datos fijos.
+- **Presentación:** `LanguageProvider` guarda el idioma actual y expone `useLanguage()` con `language`, `setLanguage` y `t` (textos fijos de la interfaz, en `i18n/translations.ts`). Actualiza `<html lang>`. Las funciones de carga de `App` dependen del idioma, así que al cambiarlo `useAsync` vuelve a pedir el contenido.
+- **Idioma inicial:** el elegido antes con el selector (en `localStorage`, clave `idioma`); si no hay, el primero de `navigator.languages` que el sitio soporte; si ninguno, inglés.
+- **Selector:** `LanguageSwitch`, un grupo de dos botones ES | EN con `aria-pressed`, en el header. En el teléfono el menú usa una fuente más compacta para que el menú y el selector entren en una línea; si igual no entran, el menú se desplaza de costado.
+- No se agregó una librería de i18n (react-i18next, etc.): con dos idiomas y pocos textos fijos alcanza con un objeto tipado.
+
+**Consecuencias.**
+- TypeScript avisa si a `translations` le falta un texto en algún idioma.
+- No hay URLs por idioma (`/en/...`): los buscadores indexan el idioma inicial. Si hiciera falta SEO en inglés, habría que agregar rutas o prerenderizado (nueva decisión).
+- Agregar un tercer idioma: sumarlo a `LANGUAGES`, a `translations` y al tipo `Texto`.
+- Como las tres son listas de solo lectura, comparten el puerto genérico `ListRepository<T>`, la implementación `StaticListRepository<T>` y el caso de uso `ListCollection<T>`. `ProjectRepository`, `EducationRepository` y `ExperienceRepository` son alias de `ListRepository<T>`.
+- Un único componente `Carousel` se usa en las tres secciones mediante `CarouselSection`. Es circular (vuelta infinita): la tarjeta activa queda al frente, más grande, y las vecinas detrás, más chicas y apagadas. Se navega con flechas, puntos, swipe, clic en una tarjeta lateral o teclado. No usa dependencias: cada tarjeta visible se identifica por su posición absoluta (`key`), así React conserva el elemento y anima el movimiento con CSS.
+
+**Consecuencias.**
+- Se quitan el filtro por tecnología y el orden por destacados/año; los elementos se muestran en el orden del archivo de contenido.
+- Si una colección necesita reglas propias (filtros, orden), se le crea su caso de uso específico en lugar de `ListCollection`.
 
 ---
 

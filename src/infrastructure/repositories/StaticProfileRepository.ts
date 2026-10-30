@@ -1,14 +1,16 @@
+import type { Language } from '../../domain/entities/Language'
 import type { Profile } from '../../domain/entities/Profile'
 import type { ProfileRepository } from '../../domain/repositories/ProfileRepository'
 
+/** Repositorio en memoria: `load` arma el perfil con los textos del idioma pedido. */
 export class StaticProfileRepository implements ProfileRepository {
-  private readonly profile: Profile
+  private readonly load: (language: Language) => Profile
 
-  constructor(profile: Profile) {
-    this.profile = profile
+  constructor(load: (language: Language) => Profile) {
+    this.load = load
   }
 
-  async getProfile(): Promise<Profile> {
-    return this.profile
+  async getProfile(language: Language): Promise<Profile> {
+    return this.load(language)
   }
 }

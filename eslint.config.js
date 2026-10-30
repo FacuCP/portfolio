@@ -40,4 +40,6 @@ export default defineConfig([
   layer('application', ['infrastructure', 'presentation', 'composition', 'react']),
   layer('infrastructure', ['application', 'presentation', 'composition', 'react']),
   layer('presentation', ['infrastructure', 'composition']),
+  // Contenido editable a mano: datos puros, solo lo lee infraestructura.
+  layer('content', ['domain', 'application', 'infrastructure', 'presentation', 'composition', 'react']),
 ])

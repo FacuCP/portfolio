@@ -1,3 +1,4 @@
+import type { Language } from '../../domain/entities/Language'
 import type { Profile } from '../../domain/entities/Profile'
 import type { ProfileRepository } from '../../domain/repositories/ProfileRepository'
 
@@ -8,7 +9,7 @@ export class GetProfile {
     this.repository = repository
   }
 
-  execute(): Promise<Profile> {
-    return this.repository.getProfile()
+  execute(language: Language): Promise<Profile> {
+    return this.repository.getProfile(language)
   }
 }

@@ -6,9 +6,8 @@ export interface SocialLink {
 export interface Profile {
   readonly fullName: string
   readonly role: string
-  readonly headline: string
   readonly about: readonly string[]
-  readonly location: string
+  readonly contactText: string
   readonly email: string
   readonly socialLinks: readonly SocialLink[]
 }

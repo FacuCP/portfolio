@@ -7,16 +7,12 @@ interface HeroProps {
 export function Hero({ profile }: HeroProps) {
   return (
     <section id="inicio" className="hero container">
-      <p className="hero__eyebrow">{profile.role}</p>
       <h1 className="hero__title">{profile.fullName}</h1>
-      <p className="hero__headline">{profile.headline}</p>
-      <div className="hero__actions">
-        <a className="button button--primary" href="#proyectos">
-          Ver proyectos
-        </a>
-        <a className="button" href="#contacto">
-          Contacto
-        </a>
+      <p className="hero__subtitle">{profile.role}</p>
+      <div className="hero__about">
+        {profile.about.map((paragraph) => (
+          <p key={paragraph}>{paragraph}</p>
+        ))}
       </div>
     </section>
   )

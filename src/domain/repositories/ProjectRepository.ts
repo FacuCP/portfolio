@@ -1,5 +1,4 @@
 import type { Project } from '../entities/Project'
+import type { ListRepository } from './ListRepository'
 
-export interface ProjectRepository {
-  getAll(): Promise<readonly Project[]>
-}
+export type ProjectRepository = ListRepository<Project>

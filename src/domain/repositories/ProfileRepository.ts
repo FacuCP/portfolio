@@ -1,5 +1,6 @@
+import type { Language } from '../entities/Language'
 import type { Profile } from '../entities/Profile'
 
 export interface ProfileRepository {
-  getProfile(): Promise<Profile>
+  getProfile(language: Language): Promise<Profile>
 }

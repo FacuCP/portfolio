@@ -1,12 +1,12 @@
 import type { PortfolioUseCases } from '../application/PortfolioUseCases'
 import { GetProfile } from '../application/use-cases/GetProfile'
-import { ListProjects } from '../application/use-cases/ListProjects'
-import { ListProjectTechnologies } from '../application/use-cases/ListProjectTechnologies'
-import { ListSkillsByCategory } from '../application/use-cases/ListSkillsByCategory'
-import { profile, projects, skills } from '../infrastructure/data/portfolioContent'
+import { ListCollection } from '../application/use-cases/ListCollection'
+import type { EducationRepository } from '../domain/repositories/EducationRepository'
+import type { ExperienceRepository } from '../domain/repositories/ExperienceRepository'
+import type { ProjectRepository } from '../domain/repositories/ProjectRepository'
+import { educationFor, experienceFor, profileFor, projectsFor } from '../infrastructure/data/portfolioContent'
+import { StaticListRepository } from '../infrastructure/repositories/StaticListRepository'
 import { StaticProfileRepository } from '../infrastructure/repositories/StaticProfileRepository'
-import { StaticProjectRepository } from '../infrastructure/repositories/StaticProjectRepository'
-import { StaticSkillRepository } from '../infrastructure/repositories/StaticSkillRepository'
 
 /**
  * Composition root: único lugar que conoce las implementaciones concretas.
@@ -14,14 +14,15 @@ import { StaticSkillRepository } from '../infrastructure/repositories/StaticSkil
  * los repositorios acá, sin tocar dominio, aplicación ni presentación.
  */
 export function createContainer(): PortfolioUseCases {
-  const profileRepository = new StaticProfileRepository(profile)
-  const projectRepository = new StaticProjectRepository(projects)
-  const skillRepository = new StaticSkillRepository(skills)
+  const profileRepository = new StaticProfileRepository(profileFor)
+  const projectRepository: ProjectRepository = new StaticListRepository(projectsFor)
+  const educationRepository: EducationRepository = new StaticListRepository(educationFor)
+  const experienceRepository: ExperienceRepository = new StaticListRepository(experienceFor)
 
   return {
     getProfile: new GetProfile(profileRepository),
-    listProjects: new ListProjects(projectRepository),
-    listProjectTechnologies: new ListProjectTechnologies(projectRepository),
-    listSkillsByCategory: new ListSkillsByCategory(skillRepository),
+    listProjects: new ListCollection(projectRepository),
+    listEducation: new ListCollection(educationRepository),
+    listExperience: new ListCollection(experienceRepository),
   }
 }
