@@ -26,7 +26,7 @@ Es una página única con estas secciones, accesibles desde el menú superior:
 | Sección | Contenido |
 |---|---|
 | Inicio | Nombre en grande, subtítulo (rol) y un texto corto "sobre mí". Ocupa la pantalla completa |
-| Proyectos | Carrusel circular de tarjetas rectangulares con imagen de fondo, título, descripción breve y botón "Ver más", que agranda la foto y muestra título, descripción e información adicional al costado (debajo, en el teléfono). La principal al frente y las demás detrás. Flechas, puntos, swipe y teclado |
+| Proyectos | Carrusel circular de tarjetas rectangulares con imágenes o videos de fondo, título, descripción breve y botón "Ver más", que agranda la foto, recorre las imágenes (5 s cada una) y videos del item y muestra título, descripción e información adicional al costado (debajo, en el teléfono). La principal al frente y las demás detrás. Flechas, puntos, swipe y teclado |
 | Estudios | Carrusel, igual que Proyectos |
 | Experiencia | Carrusel, igual que Proyectos |
 | Contacto | Texto, email y redes sociales |
@@ -72,12 +72,18 @@ Se editan en **`src/content/carruseles.ts`**, que tiene una lista por carrusel (
       Second paragraph.
     `,
   },
-  imagen: 'mi-proyecto.jpg',
+  medios: ['mi-proyecto.jpg', 'demo.mp4', 'captura.png'],
+  botones: [
+    { texto: { es: 'Ver código', en: 'View code' }, enlace: 'https://github.com/usuario/proyecto' },
+    { descarga: 'informe.pdf' },
+  ],
 },
 ```
 
-- `detalle` e `imagen` son opcionales.
-- La imagen se guarda en `public/imagenes/` y se indica solo su nombre. También se puede poner una URL completa.
+- `detalle`, `medios` y `botones` son opcionales.
+- `medios` es una lista de imágenes y videos. Los archivos se guardan en `public/imagenes/` y se indica solo su nombre (también sirve una URL completa). Los videos se reconocen por la extensión (.mp4, .webm, .ogv, .mov, .m4v).
+- Sin seleccionar, la tarjeta muestra el primer medio (si es un video, su primer cuadro). Al tocar "Ver más" se recorren todos: cada imagen 5 segundos y cada video completo, sin sonido al empezar (hay un botón para activarlo).
+- `botones` aparecen al tocar "Ver más": puede haber ninguno, uno o varios. Cada uno tiene `enlace` (se abre en una pestaña nueva) o `descarga` (archivo de `public/archivos/` o una URL completa). `texto` es opcional; si falta, el botón dice "Abrir enlace" o "Descargar" en el idioma elegido.
 - Los items se muestran en el orden del archivo.
 
 ### Datos personales

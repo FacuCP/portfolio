@@ -14,8 +14,26 @@ import type { Texto } from './idiomas'
  *    resumen  → descripción breve que se ve en la tarjeta.
  *    detalle  → texto que aparece al tocar "Ver más" (opcional).
  *               Dejá una línea en blanco para empezar otro párrafo.
- *    imagen   → nombre del archivo dentro de la carpeta public/imagenes/
- *               (por ejemplo 'mi-proyecto.jpg') o una URL completa (opcional).
+ *    medios   → lista de imágenes y videos, entre corchetes y separados
+ *               por comas (opcional). Cada uno es el nombre de un archivo
+ *               dentro de la carpeta public/imagenes/ o una URL completa:
+ *                 medios: ['foto.jpg', 'demo.mp4', 'otra-foto.png'],
+ *               - La tarjeta muestra el primero (si es un video, su primer cuadro).
+ *               - Al tocar "Ver más" se recorren todos: cada imagen 5 segundos
+ *                 y cada video completo (empieza sin sonido).
+ *               - Videos: .mp4, .webm, .ogv, .mov o .m4v. Lo demás se toma como imagen.
+ *    botones  → botones que aparecen al tocar "Ver más" (opcional). Puede haber
+ *               ninguno, uno o varios. Cada botón ABRE UN ENLACE o DESCARGA UN ARCHIVO:
+ *                 botones: [
+ *                   { enlace: 'https://github.com/usuario/proyecto' },
+ *                   { descarga: 'informe.pdf' },
+ *                 ],
+ *               - enlace:   dirección completa; se abre en una pestaña nueva.
+ *               - descarga: nombre de un archivo dentro de public/archivos/
+ *                           (o una URL completa).
+ *               - texto:    lo que dice el botón (opcional). Si falta, dice
+ *                           "Abrir enlace" o "Descargar" (en el idioma elegido):
+ *                 { texto: { es: 'Ver código', en: 'View code' }, enlace: '...' }
  *
  *  IDIOMAS: cada texto puede escribirse
  *    - igual en ambos idiomas:  titulo: 'Mi proyecto'
@@ -25,13 +43,38 @@ import type { Texto } from './idiomas'
  *
  *  Los textos van entre comillas simples '...'. El detalle va entre
  *  comillas invertidas `...` porque puede ocupar varias líneas.
- */
+ 
+  PLANTILLA
+
+  {
+  titulo: { es: '', en: '' },
+    resumen: { es: '', en: '' },
+    detalle: {
+      es: `
+      `,
+      en: `
+      `,
+    },
+  medios: '.jpg', '.mp4'],
+  botones: [
+      { texto: { es: '', en: '' }, enlace: '' },
+      { descarga: '' },
+    ],
+}
+
+*/
+
+/** Un botón tiene `enlace` o `descarga` (no los dos). */
+export type Boton =
+  | { texto?: Texto; enlace: string; descarga?: undefined }
+  | { texto?: Texto; descarga: string; enlace?: undefined }
 
 export interface ItemDeCarrusel {
   titulo: Texto
   resumen: Texto
   detalle?: Texto
-  imagen?: string
+  medios?: string[]
+  botones?: Boton[]
 }
 
 // ------------------------------------------------------------
@@ -56,7 +99,12 @@ export const proyectos: ItemDeCarrusel[] = [
         Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
       `,
     },
-    imagen: 'ejemplo.svg',
+    medios: ['ejemplo.svg', 'ejemplo-2.svg', 'ejemplo-3.svg'],
+    // Ejemplo con los dos tipos de botón; el primero con texto propio.
+    botones: [
+      { texto: { es: 'Lorem ipsum', en: 'Lorem ipsum' }, enlace: 'https://example.com' },
+      { descarga: 'ejemplo.txt' },
+    ],
   },
   {
     titulo: 'Dolor sit amet',
@@ -66,7 +114,9 @@ export const proyectos: ItemDeCarrusel[] = [
 
       Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
     `,
-    imagen: 'ejemplo.svg',
+    medios: ['ejemplo.svg'],
+    // Ejemplo con un solo botón de enlace (sin `texto`: dice "Abrir enlace").
+    botones: [{ enlace: 'https://example.com' }],
   },
   {
     titulo: 'Consectetur adipiscing',
@@ -76,7 +126,9 @@ export const proyectos: ItemDeCarrusel[] = [
 
       Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
     `,
-    imagen: 'ejemplo.svg',
+    medios: ['ejemplo.svg'],
+    // Ejemplo con un solo botón de descarga (sin `texto`: dice "Descargar").
+    botones: [{ descarga: 'ejemplo.txt' }],
   },
   {
     titulo: 'Sed do eiusmod',
@@ -86,7 +138,7 @@ export const proyectos: ItemDeCarrusel[] = [
 
       Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
     `,
-    imagen: 'ejemplo.svg',
+    medios: ['ejemplo.svg'],
   },
   {
     titulo: 'Tempor incididunt',
@@ -96,7 +148,7 @@ export const proyectos: ItemDeCarrusel[] = [
 
       Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
     `,
-    imagen: 'ejemplo.svg',
+    medios: ['ejemplo.svg'],
   },
   {
     titulo: 'Ut labore et dolore',
@@ -106,7 +158,7 @@ export const proyectos: ItemDeCarrusel[] = [
 
       Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
     `,
-    imagen: 'ejemplo.svg',
+    medios: ['ejemplo.svg'],
   },
 ]
 
@@ -132,7 +184,7 @@ export const estudios: ItemDeCarrusel[] = [
         Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
       `,
     },
-    imagen: 'ejemplo.svg',
+    medios: ['ejemplo.svg', 'ejemplo-2.svg', 'ejemplo-3.svg'],
   },
   {
     titulo: 'Dolor sit amet',
@@ -142,7 +194,7 @@ export const estudios: ItemDeCarrusel[] = [
 
       Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
     `,
-    imagen: 'ejemplo.svg',
+    medios: ['ejemplo.svg'],
   },
   {
     titulo: 'Consectetur adipiscing',
@@ -152,7 +204,7 @@ export const estudios: ItemDeCarrusel[] = [
 
       Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
     `,
-    imagen: 'ejemplo.svg',
+    medios: ['ejemplo.svg'],
   },
   {
     titulo: 'Sed do eiusmod',
@@ -162,7 +214,7 @@ export const estudios: ItemDeCarrusel[] = [
 
       Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
     `,
-    imagen: 'ejemplo.svg',
+    medios: ['ejemplo.svg'],
   },
 ]
 
@@ -188,7 +240,7 @@ export const experiencia: ItemDeCarrusel[] = [
         Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
       `,
     },
-    imagen: 'ejemplo.svg',
+    medios: ['ejemplo.svg', 'ejemplo-2.svg', 'ejemplo-3.svg'],
   },
   {
     titulo: 'Dolor sit amet',
@@ -198,7 +250,7 @@ export const experiencia: ItemDeCarrusel[] = [
 
       Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
     `,
-    imagen: 'ejemplo.svg',
+    medios: ['ejemplo.svg'],
   },
   {
     titulo: 'Consectetur adipiscing',
@@ -208,7 +260,7 @@ export const experiencia: ItemDeCarrusel[] = [
 
       Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
     `,
-    imagen: 'ejemplo.svg',
+    medios: ['ejemplo.svg'],
   },
   {
     titulo: 'Sed do eiusmod',
@@ -218,6 +270,6 @@ export const experiencia: ItemDeCarrusel[] = [
 
       Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
     `,
-    imagen: 'ejemplo.svg',
+    medios: ['ejemplo.svg'],
   },
 ]

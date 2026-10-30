@@ -1,6 +1,7 @@
 import { useId, useRef, useState, type KeyboardEvent, type PointerEvent, type TransitionEvent } from 'react'
 import type { PortfolioEntry } from '../../domain/entities/PortfolioEntry'
 import { useLanguage } from '../i18n/LanguageContext'
+import { CardMedia } from './CardMedia'
 
 export type CarouselItem = PortfolioEntry
 
@@ -114,7 +115,12 @@ export function Carousel({ label, items }: CarouselProps) {
           else if (expanded) close() // tocar la foto agrandada la achica
         }}
       >
-        {item.image && <img className="carousel__image" src={item.image} alt="" draggable={false} />}
+        {/* key distinto al expandir/contraer: al volver a abrir, la secuencia empieza desde el primer medio. */}
+        <CardMedia
+          key={isActive && expanded ? 'playing' : 'still'}
+          media={item.media}
+          playing={isActive && expanded}
+        />
         <div className="carousel__content">
           <h3 className="carousel__title">{item.title}</h3>
           <p className="carousel__summary">{item.summary}</p>
@@ -190,6 +196,34 @@ export function Carousel({ label, items }: CarouselProps) {
           {activeItem.description.map((paragraph, index) => (
             <p key={index}>{paragraph}</p>
           ))}
+          {activeItem.actions.length > 0 && (
+            <div className="carousel__actions">
+              {activeItem.actions.map((action, index) =>
+                action.kind === 'link' ? (
+                  <a
+                    key={index}
+                    className="button button--primary carousel__action"
+                    href={action.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {action.label ?? t.openLink}
+                    <span className="sr-only"> {t.opensInNewTab}</span>
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" />
+                    </svg>
+                  </a>
+                ) : (
+                  <a key={index} className="button carousel__action" href={action.url} download>
+                    {action.label ?? t.download}
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M12 4v11M7 10l5 5 5-5M5 20h14" />
+                    </svg>
+                  </a>
+                ),
+              )}
+            </div>
+          )}
           <button type="button" className="carousel__close" aria-label={t.closeDetail} onClick={close}>
             &times;
           </button>

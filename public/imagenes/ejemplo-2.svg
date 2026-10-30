@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#07071a"/>
+      <stop offset="1" stop-color="#3a0d4a"/>
+    </linearGradient>
+    <linearGradient id="sun" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ff3ec9"/>
+      <stop offset="1" stop-color="#ffb347"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="800" fill="url(#sky)"/>
+  <circle cx="600" cy="420" r="170" fill="url(#sun)" opacity="0.9"/>
+  <g fill="#07071a">
+    <rect x="420" y="430" width="360" height="10"/>
+    <rect x="420" y="465" width="360" height="14"/>
+    <rect x="420" y="505" width="360" height="18"/>
+  </g>
+  <rect y="520" width="1200" height="280" fill="#05060f"/>
+  <g stroke="#00e5ff" stroke-width="2" opacity="0.7">
+    <line x1="0" y1="540" x2="1200" y2="540"/>
+    <line x1="0" y1="575" x2="1200" y2="575"/>
+    <line x1="0" y1="625" x2="1200" y2="625"/>
+    <line x1="0" y1="695" x2="1200" y2="695"/>
+    <line x1="0" y1="790" x2="1200" y2="790"/>
+    <line x1="600" y1="520" x2="600" y2="800"/>
+    <line x1="600" y1="520" x2="300" y2="800"/>
+    <line x1="600" y1="520" x2="900" y2="800"/>
+    <line x1="600" y1="520" x2="0" y2="760"/>
+    <line x1="600" y1="520" x2="1200" y2="760"/>
+  </g>
+</svg>

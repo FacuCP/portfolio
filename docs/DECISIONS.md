@@ -257,6 +257,49 @@ Casos de uso actuales:
 - TypeScript avisa si a `translations` le falta un texto en algún idioma.
 - No hay URLs por idioma (`/en/...`): los buscadores indexan el idioma inicial. Si hiciera falta SEO en inglés, habría que agregar rutas o prerenderizado (nueva decisión).
 - Agregar un tercer idioma: sumarlo a `LANGUAGES`, a `translations` y al tipo `Texto`.
+
+---
+
+## ADR-015: Varias imágenes y videos por item del carrusel
+
+- **Fecha:** 2026-10-30
+- **Estado:** Aceptada. Reemplaza el campo `imagen` de ADR-012 por `medios`.
+
+**Contexto.** Se pidió que cada item pueda tener varias imágenes o videos: sin seleccionar se ve solo el primero; con "Ver más" van rotando (cada imagen 5 segundos) y los videos se reproducen.
+
+**Decisión.**
+- **Contenido:** `medios: ['foto.jpg', 'demo.mp4', ...]` en `src/content/carruseles.ts`. Un archivo de `public/imagenes/` o una URL completa.
+- **Dominio:** entidad `Media` (`type: 'image' | 'video'`, `src`). `PortfolioEntry.media` reemplaza a `image`. Infraestructura decide el tipo por la extensión (`.mp4`, `.webm`, `.ogv`, `.ogg`, `.mov`, `.m4v` → video).
+- **Presentación:** componente `CardMedia`.
+  - Sin reproducir: monta solo el primer medio. Si es un video, se carga con `#t=0.1` para que se vea su primer cuadro y queda en pausa.
+  - Reproduciendo (tarjeta activa y expandida): monta todos apilados y muestra uno a la vez, con fundido. Cada imagen dura `IMAGE_DURATION_MS` (5000); cada video se reproduce desde el principio hasta el final y después pasa al siguiente. Si el item tiene un solo video, se repite.
+  - Los videos arrancan sin sonido (los navegadores bloquean la reproducción automática con sonido) y aparece un botón para activarlo.
+  - Barras de progreso arriba de la foto, una por medio, cuando hay más de uno.
+  - El carrusel monta `CardMedia` con un `key` distinto al expandir y al contraer: al volver a abrir, la secuencia empieza desde el primero y no queda ningún video sonando al cerrar.
+- Se probó con un video de ejemplo público (MDN `flower.webm`) que no quedó en el contenido.
+
+**Consecuencias.**
+- No se soportan videos de YouTube/Vimeo (necesitarían un `<iframe>` y su API para saber cuándo terminan); serían una decisión nueva.
+- Los videos pesados conviene comprimirlos (por ejemplo a 720p): se descargan cuando la tarjeta se expande.
+
+---
+
+## ADR-016: Botones de enlace y descarga en el detalle
+
+- **Fecha:** 2026-10-30
+- **Estado:** Aceptada
+
+**Contexto.** Se pidió que, al tocar "Ver más", algunos items muestren botones para abrir un enlace, para descargar algo, ninguno o los dos.
+
+**Decisión.**
+- **Contenido:** `botones: [{ enlace: '...' }, { descarga: 'archivo.pdf' }]` en `src/content/carruseles.ts`, con `texto` opcional (`Texto`, traducible). El tipo `Boton` es una unión: TypeScript no deja poner `enlace` y `descarga` en el mismo botón.
+- **Dominio:** entidad `EntryAction` (`kind: 'link' | 'download'`, `url`, `label?`). `PortfolioEntry.actions` es la lista, vacía si no hay botones.
+- **Infraestructura:** una descarga con nombre de archivo se busca en `public/archivos/`; las URL completas se usan tal cual.
+- **Presentación:** el panel de detalle muestra los botones debajo del texto. Enlace: botón con degradado, ícono de "abrir afuera", `target="_blank"` con `rel="noopener noreferrer"` y un texto oculto para lectores de pantalla que avisa que se abre en una pestaña nueva. Descarga: botón de neón con ícono de flecha y atributo `download`. Sin `texto`, dicen "Abrir enlace" / "Descargar" según el idioma.
+
+**Consecuencias.**
+- El atributo `download` solo fuerza la descarga para archivos del mismo sitio. Si `descarga` apunta a otro dominio, el navegador puede abrir el archivo en lugar de descargarlo.
+- Los archivos de `public/archivos/` se publican tal cual con el sitio: no poner ahí nada privado.
 - Como las tres son listas de solo lectura, comparten el puerto genérico `ListRepository<T>`, la implementación `StaticListRepository<T>` y el caso de uso `ListCollection<T>`. `ProjectRepository`, `EducationRepository` y `ExperienceRepository` son alias de `ListRepository<T>`.
 - Un único componente `Carousel` se usa en las tres secciones mediante `CarouselSection`. Es circular (vuelta infinita): la tarjeta activa queda al frente, más grande, y las vecinas detrás, más chicas y apagadas. Se navega con flechas, puntos, swipe, clic en una tarjeta lateral o teclado. No usa dependencias: cada tarjeta visible se identifica por su posición absoluta (`key`), así React conserva el elemento y anima el movimiento con CSS.
 

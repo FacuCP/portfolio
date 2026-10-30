@@ -8,6 +8,11 @@ export interface Translations {
   readonly languageSwitch: string
   readonly scrollDown: string
   readonly seeMore: string
+  readonly mute: string
+  readonly unmute: string
+  readonly openLink: string
+  readonly download: string
+  readonly opensInNewTab: string
   readonly closeDetail: string
   readonly previous: string
   readonly next: string
@@ -23,6 +28,11 @@ export const translations: Record<Language, Translations> = {
     languageSwitch: 'Idioma',
     scrollDown: 'Bajar a Proyectos',
     seeMore: 'Ver más',
+    mute: 'Silenciar video',
+    unmute: 'Activar sonido del video',
+    openLink: 'Abrir enlace',
+    download: 'Descargar',
+    opensInNewTab: '(se abre en una pestaña nueva)',
     closeDetail: 'Cerrar detalle',
     previous: 'Anterior',
     next: 'Siguiente',
@@ -36,6 +46,11 @@ export const translations: Record<Language, Translations> = {
     languageSwitch: 'Language',
     scrollDown: 'Scroll to Projects',
     seeMore: 'See more',
+    mute: 'Mute video',
+    unmute: 'Unmute video',
+    openLink: 'Open link',
+    download: 'Download',
+    opensInNewTab: '(opens in a new tab)',
     closeDetail: 'Close details',
     previous: 'Previous',
     next: 'Next',

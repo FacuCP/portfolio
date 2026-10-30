@@ -90,6 +90,16 @@ a {
   outline-offset: 3px;
 }
 
+/* Texto solo para lectores de pantalla. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 .container {
   width: 100%;
   max-width: var(--max-width);
@@ -583,12 +593,101 @@ a {
   cursor: zoom-out;
 }
 
-.carousel__image {
+/* Medios de la tarjeta (componente CardMedia): imágenes y videos apilados, con fundido entre uno y otro. */
+.card-media {
+  position: absolute;
+  inset: 0;
+}
+
+.card-media__item {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+
+.card-media__item--visible {
+  opacity: 1;
+}
+
+/* Barras de progreso: una por medio, arriba de la foto. */
+.card-media__progress {
+  position: absolute;
+  inset: 0.85rem 1rem auto;
+  z-index: 2;
+  display: flex;
+  gap: 0.35rem;
+}
+
+.card-media__segment {
+  flex: 1;
+  height: 3px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.25);
+}
+
+.card-media__fill {
+  display: block;
+  width: 0;
+  height: 100%;
+  background: var(--gradient);
+  box-shadow: 0 0 8px rgb(0 229 255 / 0.6);
+}
+
+.card-media__fill--timed {
+  animation: card-media-fill linear forwards; /* la duración la pone CardMedia */
+}
+
+@keyframes card-media-fill {
+  from {
+    width: 0;
+  }
+
+  to {
+    width: 100%;
+  }
+}
+
+/* Botón de sonido, solo mientras se reproduce un video. */
+.card-media__sound {
+  position: absolute;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 1px solid rgb(0 229 255 / 0.6);
+  border-radius: 50%;
+  color: var(--cyan);
+  background: rgb(5 6 15 / 0.6);
+  backdrop-filter: blur(4px);
+  cursor: pointer;
+}
+
+.card-media__sound:hover {
+  box-shadow: var(--glow-cyan);
+}
+
+.card-media__sound svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-media__item {
+    transition: none;
+  }
 }
 
 /* Degradado oscuro sobre la imagen para que el texto se lea. */
@@ -701,6 +800,31 @@ a {
 
 .carousel__detail-inner p {
   color: var(--muted);
+}
+
+/* Botones del detalle: abrir enlace (degradado) o descargar (neón). */
+.carousel__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.carousel__action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.carousel__action svg {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .carousel__close {
