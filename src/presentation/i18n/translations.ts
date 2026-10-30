@@ -6,6 +6,7 @@ export interface Translations {
   readonly sections: Record<SectionId, string>
   readonly sectionsNav: string
   readonly languageSwitch: string
+  readonly scrollDown: string
   readonly seeMore: string
   readonly closeDetail: string
   readonly previous: string
@@ -20,6 +21,7 @@ export const translations: Record<Language, Translations> = {
     sections: { proyectos: 'Proyectos', estudios: 'Estudios', experiencia: 'Experiencia', contacto: 'Contacto' },
     sectionsNav: 'Secciones',
     languageSwitch: 'Idioma',
+    scrollDown: 'Bajar a Proyectos',
     seeMore: 'Ver más',
     closeDetail: 'Cerrar detalle',
     previous: 'Anterior',
@@ -32,6 +34,7 @@ export const translations: Record<Language, Translations> = {
     sections: { proyectos: 'Projects', estudios: 'Education', experiencia: 'Experience', contacto: 'Contact' },
     sectionsNav: 'Sections',
     languageSwitch: 'Language',
+    scrollDown: 'Scroll to Projects',
     seeMore: 'See more',
     closeDetail: 'Close details',
     previous: 'Previous',

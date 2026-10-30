@@ -31,7 +31,7 @@ Es una página única con estas secciones, accesibles desde el menú superior:
 | Experiencia | Carrusel, igual que Proyectos |
 | Contacto | Texto, email y redes sociales |
 
-El diseño es futurista y siempre oscuro: fondo con grilla y luces de neón celeste y rosa. Los colores se cambian en las variables de `:root`, al principio de `src/presentation/styles/global.css`.
+El diseño es futurista y siempre oscuro: fondo con grilla, estrellas animadas y luces de neón celeste y rosa. La cantidad, los colores y la velocidad de las estrellas se ajustan al principio de `src/presentation/components/Starfield.tsx`. Los colores se cambian en las variables de `:root`, al principio de `src/presentation/styles/global.css`.
 
 ### Idiomas
 

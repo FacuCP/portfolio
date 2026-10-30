@@ -225,7 +225,8 @@ Casos de uso actuales:
 **Decisión.**
 - Un solo tema, oscuro (`color-scheme: dark`); ya no se sigue `prefers-color-scheme`. Los colores de neón necesitan fondo oscuro para destacar.
 - Paleta en `:root`: `--cyan` (#00e5ff), `--pink` (#ff3ec9), `--gradient` (celeste → rosa) y sombras de brillo `--glow-cyan` y `--glow-pink`.
-- Fondo con luces difusas (gradientes radiales) y una grilla fina que se desvanece hacia abajo (`body::before`).
+- Fondo con luces difusas (gradientes radiales) y una grilla fina que se desvanece hacia abajo (`body::before`). El fondo se define en `<html>` y no en `<body>`: si estuviera en `<body>`, se pintaría encima de los elementos con `z-index: -1` (grilla y estrellas) y los taparía.
+- Cielo estrellado (`Starfield`): un `<canvas>` fijo detrás del contenido, sin dependencias. Las estrellas son blancas, celestes y rosas y titilan; las más cercanas se desplazan un poco con el scroll (parallax) y cada 6 a 14 s cruza una estrella fugaz. La cantidad depende del área de la pantalla (1 cada 5000 px²) y dibujar un cuadro cuesta menos de 1 ms. Con `prefers-reduced-motion` se dibuja una sola vez, quieto. Los ajustes son constantes al principio de `Starfield.tsx`.
 - Texto con degradado en el nombre, la marca del header y el título del panel de detalle. Fuente monoespaciada (del sistema, `--font-mono`) para el menú, el subtítulo, los botones y el footer.
 - Bordes y halos de neón en la tarjeta principal del carrusel, en los botones y en los indicadores. La imagen de ejemplo usa la misma paleta.
 - No se agregan fuentes externas: se usan fuentes del sistema, para no depender de otro servicio ni sumar peso.

@@ -4,6 +4,7 @@ import { Contact } from './components/Contact'
 import { Footer } from './components/Footer'
 import { Header } from './components/Header'
 import { Hero } from './components/Hero'
+import { Starfield } from './components/Starfield'
 import { StatusMessage } from './components/StatusMessage'
 import { useUseCases } from './context/UseCasesContext'
 import { useAsync } from './hooks/useAsync'
@@ -22,6 +23,7 @@ export function App() {
 
   return (
     <>
+      <Starfield />
       <Header />
       <main>
         {profile.status === 'success' ? (
