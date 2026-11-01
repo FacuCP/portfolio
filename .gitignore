@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Builds del juego (se publican como GitHub Releases)
+public/archivos/Ascenso Celestial - *
